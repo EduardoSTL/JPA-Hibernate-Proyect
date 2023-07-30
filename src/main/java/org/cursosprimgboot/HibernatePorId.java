@@ -21,7 +21,6 @@ public class HibernatePorId {
         Long id2 = s.nextLong();
         Cliente cliente2 = em.find(Cliente.class, id2);
         System.out.println(cliente2);
-
         em.close();
     }
 }

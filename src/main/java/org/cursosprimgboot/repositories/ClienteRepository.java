@@ -23,8 +23,10 @@ public class ClienteRepository implements CrudRepository<Cliente>{
     @Override
     public void guardar(Cliente cliente) {
         if(cliente.getId() != null && cliente.getId() > 0) {
+            //extraer cliente
             em.merge(cliente);
         } else {
+            //insert cliente
             em.persist(cliente);
         }
     }
