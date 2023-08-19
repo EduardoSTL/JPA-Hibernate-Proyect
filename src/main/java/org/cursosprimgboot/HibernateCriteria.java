@@ -4,11 +4,9 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.*;
 import org.cursosprimgboot.entity.Cliente;
 import org.cursosprimgboot.util.JpaUtil;
-import org.hibernate.Criteria;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 public class HibernateCriteria {
     public static void main(String[] args) {
@@ -19,12 +17,16 @@ public class HibernateCriteria {
 
         CriteriaBuilder criteria = em.getCriteriaBuilder();
         //CriteriaBuilder = interface
+        //Cliente de tipo Criteria:
         CriteriaQuery<Cliente> query = criteria.createQuery(Cliente.class);
 
-        Root<Cliente> from = query.from(Cliente.class);
         //Criteria root = interface de tipo generic
+        //conversion de from a criteria, query es del tipo Criteria
+        Root<Cliente> from = query.from(Cliente.class);
 
         System.out.println("======= lista de clientes =======");
+        //selecciona el objeto "from" que al momento de usarlo en del tipo criteria(query object)
+        //asignamos un valor
         query.select(from);
         List<Cliente> clientes = em.createQuery(query).getResultList();
         clientes.forEach(System.out::println);
@@ -34,22 +36,22 @@ public class HibernateCriteria {
         //parecido a where like
         //listar donde los campos sean iguales
         query = criteria.createQuery(Cliente.class);
+        //dentro de este caso ahora ambos toman el valor de Criteria:
         from = query.from(Cliente.class);
 
         ParameterExpression<String> nombreParam = criteria.parameter(String.class, "nombre");
         query.select(from).where(criteria.equal(from.get("nombre"), nombreParam));
-        clientes = em.createQuery(query).setParameter("nombre", "Andres").getResultList();
+        clientes = em.createQuery(query).setParameter("nombre", "Rodolfo").getResultList();
         clientes.forEach(System.out::println);
 
         System.out.println("============ usando where like para buscar clientes por nombre ============");
         //criterio de similitud
         query = criteria.createQuery(Cliente.class);
         from = query.from(Cliente.class);
-
         ParameterExpression<String> nombreParamLike = criteria.parameter(String.class, "nombreParam");
 
-        query.select(from).where(criteria.equal(criteria.upper(from.get("nombre")), criteria.upper(nombreParamLike)));
-        clientes = em.createQuery(query).setParameter("nombreParam", "%Jo%").getResultList();
+        query.select(from).where(criteria.like(criteria.upper(from.get("nombre")), criteria.upper(nombreParamLike)));
+        clientes = em.createQuery(query).setParameter("nombreParam", "%j%").getResultList();
         clientes.forEach(System.out::println);
 
         System.out.println("============ ejemplo usando where between para rangos ============");
@@ -225,7 +227,7 @@ public class HibernateCriteria {
         count = (Long) registro[0];
         sum = (Long) registro[1];
         max = (Long) registro[2];
-        min = (Long) registro[4];
+        min = (Long) registro[3];
 
         System.out.println("count = " + count + ", suma = " + sum + ", maximo = "
                 + max + ", minimo = " + min);
